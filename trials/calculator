@@ -1,0 +1,30 @@
+def add(x,y):
+	print x+y
+def sub(x,y):
+	print x-y
+def mult(x,y):
+	print x*y
+def div(x,y):
+	print float(x/y)
+def main():
+
+	while True:
+		c = int(input('enter the operation : \n 1)add \n 2)subtract \n 3)multiply \n 4)divide \n 5)exit \n'))
+		if c==5:
+			break
+		a = int(input('enter 1st number : '))
+		b = int(input('enter 2nd number : '))
+
+		if c==1 :
+			add(a,b)
+		elif c==2 :
+			sub(a,b)
+		elif c==3:
+			mult(a,b)
+		elif c==4:
+			div(a,b)
+		else:
+			print('please input another option')
+
+if __name__ == "__main__":
+	main()

@@ -25,14 +25,14 @@ class recommendation():
         for person in self.people:
             if person!=person_interest:
                 scores.append((self.compare(person_interest,person),person))
-        scores.sort();
-        scores.reverse();
+        scores.sort()
+        scores.reverse()
         print scores
 
     def getReco(self,person_interest):
         totals = {}
         no_review = {}
-        ranking = {}
+        ranking = []
         for person in self.people:
             if person!=person_interest:
                 score = self.compare(person_interest,person)
@@ -44,9 +44,9 @@ class recommendation():
                         no_review[item]+=score
 
         for item  in totals:
-            ranking[item] = totals[item]/no_review[item]
-        print totals
-        print no_review
+            ranking.append((totals[item]/no_review[item],item))
+        ranking.sort()
+        ranking.reverse()
         print ranking
 
 # from recommendations import recommendation

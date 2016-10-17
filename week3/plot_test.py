@@ -9,8 +9,11 @@ import matplotlib.pyplot as plt
 xData = np.arange(-10,10,0.1)
 sinData = np.sin(xData)
 cosData = np.cos(xData)
-test = 3*np.power(xData,2) + 2*xData + 4
-#plt.plot(xData,sinData,'g',xData,cosData,'b')
-plt.plot(xData,test)
 
-plt.show()
+
+#plt.plot(xData,sinData,'g',xData,cosData,'b')
+for i in range(4):
+    print 'hello'
+    test = i*np.power(xData,2) + 2*xData + 4
+    plt.plot(xData,test,'ro')
+    plt.show()

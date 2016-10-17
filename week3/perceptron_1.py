@@ -7,10 +7,10 @@
 import numpy as np
 
 ip_value = np.array([[1,1],[0,1],[1,0],[0,0]])
-op_value = [1,1,1,0] #testing or gate
+op_value = [0,1,1,0] #testing or gate
 ip_bias = 1
 
-learning_constant = 0.1
+learning_constant = 0.01
 weight = 0.9*np.random.random(2)+0.01
 weight_bias = 0.9*np.random.random(1)+0.01
 print weight

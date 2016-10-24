@@ -6,8 +6,8 @@
 
 import numpy as np
 
-ip_value = np.array([[1,1],[0,1],[1,0],[0,0]])
-op_value = [0,1,1,0] #testing or gate
+ip_value = np.array([[1,1],[-1,1],[1,-1],[-1,-1]])
+op_value = [1,1,1,-1] #testing or gate
 ip_bias = 1
 
 learning_constant = 0.01

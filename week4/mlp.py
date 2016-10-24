@@ -2,6 +2,7 @@
 
 # Learning Machines
 # Taught by Patrick Hebron at NYU ITP
+# Code by Patrick Hebron - present here to make mlp1.py
 
 import numpy as np
 

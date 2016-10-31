@@ -7,6 +7,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+import random as random
 
 def sigmoid_fn(x):
 	return 1.0 / ( 1.0 + np.exp( -x ) )
@@ -67,15 +68,7 @@ class MlpVisualizer:
 		self.error_ydata.append( error )
 		#
 		title = 'Epoch: %d, Error: %f' % ( epoch, error )
-		# self.error_plot.set_title( title )
-		# Compute error plotter x-range:
-		# mlen = self.report_freq * self.error_buffer
-		# xmin = np.amin( self.error_xdata )
-		# xmax = max( xmin + mlen, np.amax( self.error_xdata ) )
-		# Update error plotter:
-		# self.error_line.set_data( self.error_xdata, self.error_ydata )
-		# self.error_plot.set_xlim( xmin, xmax )
-		# Update predictions plotter:
+
 		self.datav_targ_line.set_data( input, target )
 		self.datav_pred_line.set_data( input, output )
 		# Draw plot:
@@ -124,8 +117,13 @@ class mlp():
 		self.error = np.zeros( ( self.sample_size, 1 ) )
 
 	def feed_forward(self,l_weights, prev_l_output, l_bias) :
-		l_activations = np.dot( l_weights, prev_l_output ) + l_bias
+		print l_weights
+		print prev_l_output
+		print l_bias
+		l_activations = np.dot( l_weights, prev_l_output ).T #+ l_bias
 		l_output = activation_fn( l_activations )
+		print l_activations
+		print l_output
 		return l_output, l_activations
 
 	def back_propogate(self,l_activations,l_weights,l_delta,is_last_layer) :
@@ -135,6 +133,9 @@ class mlp():
 			return activation_dfn(l_activations)*np.dot(l_weights.T,l_delta)
 
 	def apply_delta(self,l_deltas,l_outputs,l_weights,l_bias):
+		print l_deltas
+		print l_outputs
+		print l_outputs.T
 		l_weights -= learning_rate * np.dot( l_deltas, l_outputs.T )
 		l_bias -= learning_rate * l_deltas
 		return l_weights, l_bias
@@ -183,8 +184,8 @@ class mlp():
 			self.vis_op.append(self.l_outputs[self.no_layers-1])
 			self.vis_exp_op.append(output)
 
-activation_fn  = tanh_fn
-activation_dfn = tanh_dfn
+activation_fn  = sigmoid_fn
+activation_dfn = sigmoid_dfn
 
 epoch = 0
 reportFreq = 1000
@@ -197,11 +198,20 @@ error = np.zeros( ( mlp1.sample_size, 1 ) )
 mlp1.init(1e6,3,[1,15,1])
 vis = MlpVisualizer(0,7,-2,2,reportFreq)
 
-while epoch <= mlp1.epoch :
+j = 0
+temp = []
+for line in open('occupancy_data/datatest.txt'):
+	# (ip0,ip1,ip2,ip3,ip4,op) = line.split(',')[2:8]
+	(ip0 ,op) = line.split(',')[6:8]
+	temp.append( np.array([float(ip0),float(op)]))
 
-	sample_vec = np.random.uniform( 0.0, np.pi * 2.0, ( mlp1.sample_size, 1 ) )
+len_dataset = len(temp);
+
+while epoch <= mlp1.epoch :
+	vec_number = random.uniform(0,len_dataset)
+	sample_vec = temp[int(vec_number)][0:1]
 	# Compute output:
-	output_vec = (np.sin( sample_vec )*np.sin( sample_vec ) + np.cos( sample_vec ))/2
+	output_vec = temp[int(vec_number)][1:2]
 
 	mlp1.single_loop(sample_vec,output_vec)
 	mlp1.error_report(epoch,reportFreq,sample_vec,output_vec,vis)

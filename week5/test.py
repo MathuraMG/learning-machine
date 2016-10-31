@@ -6,6 +6,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import random as random
 from matplotlib.lines import Line2D
 
 def sigmoid_fn(x):
@@ -66,7 +67,8 @@ class MlpVisualizer:
 		self.error_xdata.append( epoch )
 		self.error_ydata.append( error )
 		#
-		title = 'Epoch: %d, Error: %f' % ( epoch, error )
+		# title = 'Epoch: %d, Error: %f' % ( epoch, error )
+		title = error
 		# self.error_plot.set_title( title )
 		# Compute error plotter x-range:
 		# mlen = self.report_freq * self.error_buffer
@@ -85,7 +87,7 @@ class MlpVisualizer:
 
 class mlp():
 
-	sample_size = 1
+	sample_size = 4
 	hidden_size = 15
 	# hidden1_size = 15
 	output_size = 1
@@ -111,7 +113,6 @@ class mlp():
 	def init_bias_weight(self,no_layers):
 		# layer_size = [self.sample_size, self.hidden_size, self.output_size]
 		for i in range(no_layers-1):
-			print i
 			self.layer_weights.append(np.random.rand( self.layer_size[i+1], self.layer_size[i] ))
 			self.layer_bias.append(np.random.rand(self.layer_size[i+1],1))
 
@@ -164,27 +165,31 @@ class mlp():
 			self.layer_weights[i], self.layer_bias[i]  = self.apply_delta(self.l_deltas[i],self.l_outputs[i], self.layer_weights[i],self.layer_bias[i])
 
 		#error calc
+		print output_vec, self.l_outputs[self.no_layers-1]
 		self.error +=  np.absolute( output_vec - self.l_outputs[self.no_layers-1] )
+
 
 	def error_report(self,curr_epoch,reportFreq,input,output,vis):
 		#  vis,input,output,predicted_output):
 		# Report error rate:
 		if epoch % reportFreq == 0:
-			print( "Epoch: %d\nError: %f" % ( curr_epoch, np.sum( self.error ) / float( self.sample_size ) / float( reportFreq ) ) )
+			# print( "Epoch: %d\nError: %f" % ( curr_epoch, np.sum( self.error ) / float( self.sample_size ) / float( reportFreq ) ) )
+			print self.error, epoch
 			self.error = np.zeros( ( self.sample_size, 1 ) )
-			print(len(self.vis_ip))
-			vis.update(curr_epoch, self.error,self.vis_ip,self.vis_exp_op,self.vis_op)
-			self.vis_ip = []
-			self.vis_op = []
-			self.vis_exp_op = []
+			# print(len(self.vis_ip))
+			# vis.update(curr_epoch, self.error,self.vis_ip,self.vis_exp_op,self.vis_op)
+			# self.vis_ip = []
+			# self.vis_op = []
+			# self.vis_exp_op = []
 
-		else:
-			self.vis_ip.append(input)
-			self.vis_op.append(self.l_outputs[self.no_layers-1])
-			self.vis_exp_op.append(output)
+		# else:
+		# 	print ''
+			# self.vis_ip.append(input)
+			# self.vis_op.append(self.l_outputs[self.no_layers-1])
+			# self.vis_exp_op.append(output)
 
-activation_fn  = tanh_fn
-activation_dfn = tanh_dfn
+activation_fn  = sigmoid_fn
+activation_dfn = sigmoid_dfn
 
 epoch = 0
 reportFreq = 1000
@@ -194,17 +199,77 @@ learning_rate = 0.05
 # Initialize mlp:
 mlp1 = mlp()
 error = np.zeros( ( mlp1.sample_size, 1 ) )
-mlp1.init(1e6,3,[1,15,1])
-vis = MlpVisualizer(0,7,-2,2,reportFreq)
+mlp1.init(1*1e6,3,[4,15,1])
+vis = MlpVisualizer(0,0.05,-1,2,reportFreq)
+
+#get the data from dataset
+j = 0
+temp = []
+for line in open('occupancy_data/datatest1.txt'):
+	(ip0,ip1,ip2,ip3,ip4,op) = line.split(',')[2:8]
+	# (ip0 ,ip1, ip2, op) = line.split(',')[0:4]
+	temp.append( np.array([float(ip0)/100,float(ip1)/100,float(ip3)/2000,float(ip4),float(op) ]))
+len_dataset = len(temp);
+
 
 while epoch <= mlp1.epoch :
 
+	a = int(random.uniform(0,len_dataset-100))
 	sample_vec = np.random.uniform( 0.0, np.pi * 2.0, ( mlp1.sample_size, 1 ) )
 	# Compute output:
-	output_vec = (np.sin( sample_vec )*np.sin( sample_vec ) + np.cos( sample_vec ))/2
+	output_vec = np.random.uniform( 0.0, np.pi * 2.0, ( mlp1.output_size, 1 ) )
+
+	sample_vec[0][0] = np.array(temp[a][0:1])
+	sample_vec[1][0] = np.array(temp[a][1:2])
+	sample_vec[2][0] = np.array(temp[a][2:3])
+	sample_vec[3][0] = np.array(temp[a][3:4])
+	# sample_vec[4][0] = np.array(temp[a][4:5])
+	output_vec[0][0] = np.array(temp[a][4:5])
 
 	mlp1.single_loop(sample_vec,output_vec)
 	mlp1.error_report(epoch,reportFreq,sample_vec,output_vec,vis)
 	# ,vis,sample_vec,output_vec,output_vec)
 	# Advance epoch iterator:
 	epoch += 1
+
+print "TRAINED"
+
+
+print mlp1.layer_weights
+#get the data from dataset
+test = input("Print 1 to test")
+if test == 1:
+
+	a = int(random.uniform(len_dataset-100,len_dataset))
+	sample_vec = np.random.uniform( 0.0, np.pi * 2.0, ( mlp1.sample_size, 1 ) )
+	# Compute output:
+	output_vec = np.random.uniform( 0.0, np.pi * 2.0, ( mlp1.output_size, 1 ) )
+
+	sample_vec[0][0] = np.array(temp[a][0:1])
+	sample_vec[1][0] = np.array(temp[a][1:2])
+	sample_vec[2][0] = np.array(temp[a][2:3])
+	sample_vec[3][0] = np.array(temp[a][3:4])
+	# sample_vec[4][0] = np.array(temp[a][4:5])
+	output_vec[0][0] = np.array(temp[a][4:5])
+
+	mlp1.single_loop(sample_vec,output_vec)
+	mlp1.error_report(epoch,reportFreq,sample_vec,output_vec,vis)
+
+
+# [array([[ -1.11658316,  -6.63828173,  14.12352507,   0.16191703],
+#        [  0.35403078,   1.04657695,  -0.2831504 ,   0.63514848],
+#        [  0.16944457,   0.06375683,  -0.74500543,   0.11892377],
+#        [  0.07533053,  -2.1790229 ,   1.27191267,   0.82881094],
+#        [  0.36988362,   2.42039056,  -0.51204487,   0.85458273],
+#        [ -0.42499659,   5.18804538,  -0.56230807,   0.94880529],
+#        [ -0.19164678,   2.6604004 ,  -1.1583207 ,   0.80116845],
+#        [ -0.06503517,   4.10065808,  -1.2459598 ,   0.65871425],
+#        [ -0.18687173,   8.12066375,  -0.56649147,   0.75706004],
+#        [  0.89865017,   9.26432871,  -3.73168239,   0.15414304],
+#        [  0.3776219 ,  -2.42203089,   0.69489637,   0.49594558],
+#        [  0.24843764,   6.57299286,  -0.98986943,   0.32826934],
+#        [  1.02364297,  -9.32246217,   4.06921567,   0.76534497],
+#        [ -0.39961952,  10.69623552,  -1.7300804 ,   0.28630099],
+#        [  0.98712682, -13.59830906,   5.18490786,   0.35034111]]), array([[ 8.42317402, -0.83575616, -0.19006316,  1.44944032, -1.57493328,
+#         -2.77627935, -1.6839459 , -2.29014822, -4.15194331, -4.4217652 ,
+#          1.52217533, -3.36693868,  4.88813745, -5.16370112,  6.65323273]])]

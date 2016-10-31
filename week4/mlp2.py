@@ -188,7 +188,7 @@ mlp = Mlp( [ sample_size, 15, output_size ], "tanh" )
 
 # Construct dataset:
 training_inputs  = np.random.uniform( 0.0, np.pi * 2.0, ( sample_size, example_cnt ) )
-training_outputs = np.sin( training_inputs )
+training_outputs = np.cos( training_inputs )
 
 # Train MLP:
 mlp.train( training_inputs, training_outputs, learn_rate, epoch_cnt, batch_size, report_freq )

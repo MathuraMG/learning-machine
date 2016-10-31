@@ -86,7 +86,7 @@ class MlpVisualizer:
 class mlp():
 
 	sample_size = 1
-	hidden_size = 15
+	hidden_size = 2
 	# hidden1_size = 15
 	output_size = 1
 	error = []
@@ -194,7 +194,7 @@ learning_rate = 0.05
 # Initialize mlp:
 mlp1 = mlp()
 error = np.zeros( ( mlp1.sample_size, 1 ) )
-mlp1.init(1e6,3,[1,15,1])
+mlp1.init(1e6,3,[1,2,1])  # best size for hidden layer should be between average of sample and op vec size -> 2* sample vec size
 vis = MlpVisualizer(0,7,-2,2,reportFreq)
 
 while epoch <= mlp1.epoch :

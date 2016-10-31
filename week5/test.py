@@ -199,7 +199,7 @@ learning_rate = 0.05
 # Initialize mlp:
 mlp1 = mlp()
 error = np.zeros( ( mlp1.sample_size, 1 ) )
-mlp1.init(1*1e6,3,[4,15,1])
+mlp1.init(1*1e6,3,[4,5,1])
 vis = MlpVisualizer(0,0.05,-1,2,reportFreq)
 
 #get the data from dataset
@@ -212,7 +212,7 @@ for line in open('occupancy_data/datatest1.txt'):
 len_dataset = len(temp);
 
 
-while epoch <= mlp1.epoch :
+while epoch <= 0 : # mlp1.epoch :
 
 	a = int(random.uniform(0,len_dataset-100))
 	sample_vec = np.random.uniform( 0.0, np.pi * 2.0, ( mlp1.sample_size, 1 ) )
@@ -234,6 +234,12 @@ while epoch <= mlp1.epoch :
 
 print "TRAINED"
 
+mlp1.layer_weights = [np.array([[ 0.17315693,  3.97934288, -1.39429779,  0.05876728],
+       [ 0.60272453,  0.40983925,  0.64044582,  0.40540237],
+       [ 0.38631689, -0.22663658,  1.11830108,  0.31488553],
+       [-0.26283805,  5.16384334, -2.4367963 ,  0.911978  ],
+       [ 0.30596035, -7.71537321,  7.46137388,  0.09856373]]), np.array([[ -3.81665052,  -0.39449994,   0.47955104,  -5.23866311,
+         10.19272988]])]
 
 print mlp1.layer_weights
 #get the data from dataset

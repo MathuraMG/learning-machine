@@ -28,8 +28,12 @@ char_to_ix = { ch:i for i,ch in enumerate(chars) }
 ix_to_char = { i:ch for i,ch in enumerate(chars) }
 
 # hyperparameters
-hidden_size = 100 # size of hidden layer of neurons
-seq_length = 10 # number of steps to unroll the RNN for
+# 512 - 3 DOES NOT WORK - gives a lot of straight l ines
+# 100 - 10 - Not great - some are ok
+# 200 - 20 - Good - lot of good designs - but the center gets very crowded
+# 100 - 30 - yuck - lot of straight lines
+hidden_size = 200 # size of hidden layer of neurons
+seq_length = 20  # number of steps to unroll the RNN for
 learning_rate = 1e-1
 
 # model parameters
@@ -98,22 +102,25 @@ n, p = 0, 0
 mWxh, mWhh, mWhy = np.zeros_like(Wxh), np.zeros_like(Whh), np.zeros_like(Why)
 mbh, mby = np.zeros_like(bh), np.zeros_like(by) # memory variables for Adagrad
 smooth_loss = -np.log(1.0/vocab_size)*seq_length # loss at iteration 0
-while n < 40000:
+while n < 90001:
+
   # prepare inputs (we're sweeping from left to right in steps seq_length long)
   if p+seq_length+1 >= len(data) or n == 0:
     hprev = np.zeros((hidden_size,1)) # reset RNN memory
     p = 0 # go from start of data
   inputs = [char_to_ix[ch] for ch in data[p:p+seq_length]]
+  # print inputs[0]
   targets = [char_to_ix[ch] for ch in data[p+1:p+seq_length+1]]
 
   # sample from the model now and then
-  if n % 200 == 0:
-    sample_ix = sample(hprev, inputs[0], 2000 )
-    txt = ''.join(ix_to_char[ix] for ix in sample_ix)
-    print('****')
-    txt = txt.replace('\n',',')
-    dict['Data'].append(txt)
-    print('****')
+  if n % 20000 == 0:
+      for j in range(len(inputs)):
+        sample_ix = sample(hprev, inputs[0], 3000 )
+        txt = ''.join(ix_to_char[ix] for ix in sample_ix)
+        print('****')
+        txt = txt.replace('\n',',')
+        dict['Data'].append(txt)
+        print('****')
     # print '----\n %s \n----' % (txt, )
     # print dict['Data']
 

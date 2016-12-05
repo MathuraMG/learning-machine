@@ -19,8 +19,8 @@ function setup() {
   parts_radio.option('72', 72);
   parts_radio.value(36);
   parts_radio.changed(radioChanged);
-  thickness_header = createElement('h4', 'Stroke Thickness');
-  thickness_slider = createSlider(1, 10, 2);
+  // thickness_header = createElement('h4', 'Stroke Thickness');
+  // thickness_slider = createSlider(1, 10, 2);
   hue_header = createElement('h4', 'Stroke Hue');
   hue_slider = createSlider(1, 360, 320);
   draw_radial();
@@ -55,84 +55,86 @@ function draw_radial() {
     angleMode(DEGREES);
 
     rotate(360 / number_parts);
-    stroke(200);
+    stroke(220);
     line(0, 0, WIDTH / 2, HEIGHT / 2);
 
   }
 }
 
 function mouseDragged() {
-  // console.log('drag');
-  if (mouseX < WIDTH && mouseY < HEIGHT) {
-
+  console.log('drag');
+  if (touchX < WIDTH && touchY < HEIGHT) {
+    push();
     translate(WIDTH / 2, HEIGHT / 2);
     colorMode(HSB);
     for (var i = 0; i < number_parts; i++) {
       angleMode(DEGREES);
       rotate(360 / number_parts);
       stroke(hue_slider.value(), 60, 80);
-      strokeWeight(thickness_slider.value());
-      line(pmouseX - WIDTH / 2, pmouseY - HEIGHT / 2, mouseX - WIDTH / 2, pmouseY - HEIGHT / 2);
-      line(pmouseX - WIDTH / 2, mouseY - HEIGHT / 2, mouseX - WIDTH / 2, mouseY - HEIGHT / 2);
-      line(pmouseX - WIDTH / 2, HEIGHT - pmouseY - HEIGHT / 2, mouseX - WIDTH / 2, HEIGHT - pmouseY - HEIGHT / 2);
-      line(pmouseX - WIDTH / 2, HEIGHT - mouseY - HEIGHT / 2, mouseX - WIDTH / 2, HEIGHT - mouseY - HEIGHT / 2);
+      // strokeWeight(thickness_slider.value());
+      strokeWeight(2);
+      line(ptouchX - WIDTH / 2, ptouchY - HEIGHT / 2, touchX - WIDTH / 2, ptouchY - HEIGHT / 2);
+      line(ptouchX - WIDTH / 2, touchY - HEIGHT / 2, touchX - WIDTH / 2, touchY - HEIGHT / 2);
+      line(ptouchX - WIDTH / 2, HEIGHT - ptouchY - HEIGHT / 2, touchX - WIDTH / 2, HEIGHT - ptouchY - HEIGHT / 2);
+      line(ptouchX - WIDTH / 2, HEIGHT - touchY - HEIGHT / 2, touchX - WIDTH / 2, HEIGHT - touchY - HEIGHT / 2);
     }
-    if (mouseX > pmouseX) {
-      for (var i = 0; i < (mouseX - pmouseX); i++) {
+    if (touchX > ptouchX) {
+      for (var i = 0; i < (touchX - ptouchX); i++) {
         drawing.push('a');
       }
-    } else if (mouseX < pmouseX) {
-      for (var i = 0; i < (pmouseX - mouseX); i++) {
+    } else if (touchX < ptouchX) {
+      for (var i = 0; i < (ptouchX - touchX); i++) {
         drawing.push('b');
       }
     }
-    if (mouseY > pmouseY) {
-      for (var i = 0; i < (mouseY - pmouseY); i++) {
+    if (touchY > ptouchY) {
+      for (var i = 0; i < (touchY - ptouchY); i++) {
         drawing.push('c');
       }
-    } else if (mouseY < pmouseY) {
-      for (var i = 0; i < (pmouseY - mouseY); i++) {
+    } else if (touchY < ptouchY) {
+      for (var i = 0; i < (ptouchY - touchY); i++) {
         drawing.push('d');
       }
     }
-
+    pop();
   }
 
 }
 
 
-function mousePressed() {
-  if (mouseX < WIDTH && mouseY < HEIGHT) {
+function touchStarted() {
+  if (touchX < WIDTH && touchY < HEIGHT) {
     print('NOW');
     drawing.push('e');
     startDrawing = true;
   }
 }
 
-function mouseReleased() {
-  if (mouseX < WIDTH && mouseY < HEIGHT) {
+function touchEnded() {
+  if (touchX < WIDTH && touchY < HEIGHT) {
     drawing.push('f');
   }
 }
 
 function mouseMoved() {
+  console.log('hi');
   if (startDrawing) {
 
-    if (mouseX > pmouseX) {
-      for (var i = 0; i < (mouseX - pmouseX); i++) {
+    if (touchX > ptouchX) {
+      for (var i = 0; i < (touchX - ptouchX); i++) {
         drawing.push('a');
       }
-    } else if (mouseX < pmouseX) {
-      for (var i = 0; i < (pmouseX - mouseX); i++) {
+    } else if (touchX < ptouchX) {
+      for (var i = 0; i < (ptouchX - touchX); i++) {
         drawing.push('b');
       }
     }
-    if (mouseY > pmouseY) {
-      for (var i = 0; i < (mouseY - pmouseY); i++) {
+    if (touchY > ptouchY) {
+      for (var i = 0; i < (touchY - ptouchY); i++) {
         drawing.push('c');
       }
-    } else if (mouseY < pmouseY) {
-      for (var i = 0; i < (pmouseY - mouseY); i++) {
+    } else if (touchY < ptouchY) {
+      for (var i = 0; i < (ptouchY - touchY); i++) {
         drawing.push('d');
       }
     }

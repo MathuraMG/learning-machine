@@ -24,16 +24,19 @@ function printData(data) {
 function draw() {
   // print(frameCount);
   if (frameCount < JSON_data.Data.length) {
-    background(0);
-    // draw_radial();
+    background(255);
+    draw_radial();
     translate(WIDTH / 2, HEIGHT / 2);
     redrawJSON(JSON_data.Data[i].split(','));
   }
   i = i + 1;
+  textSize(32);
+  fill(255);
+  text(i,WIDTH / 2-100, HEIGHT / 2-50);
 }
 
 function draw_radial() {
-
+push();
   translate(WIDTH / 2, HEIGHT / 2);
 
   // ellipse(0,0,20,20);
@@ -41,16 +44,17 @@ function draw_radial() {
   for (var i = 0; i < number_parts; i++) {
     angleMode(DEGREES);
     rotate(360 / number_parts);
-    stroke(200);
+    stroke(0);
     line(0, 0, WIDTH / 2, HEIGHT / 2);
   }
+  pop();
 }
 
 function redrawJSON(mouse_array) {
-  p_mouse_x = 500;
-  p_mouse_y = 250;
-  mouse_x = 500;
-  mouse_y = 250;
+  p_mouse_x = WIDTH / 2 +1;
+  p_mouse_y = HEIGHT / 2 +1;
+  mouse_x = WIDTH / 2 +1;
+  mouse_y = HEIGHT / 2 +1;
   mouse_array.unshift('e');
   for (var i = 0; i < mouse_array.length; i++) {
 
@@ -92,7 +96,7 @@ function redrawJSON(mouse_array) {
       for (var j = 0; j < number_parts; j++) {
         angleMode(DEGREES);
         rotate(360 / number_parts);
-        stroke(320, 60, 80);
+        stroke(320, 60, 10);
         noFill();
         strokeWeight(2);
         line(p_mouse_x - WIDTH / 2, p_mouse_y - HEIGHT / 2, mouse_x - WIDTH / 2, mouse_y - HEIGHT / 2);

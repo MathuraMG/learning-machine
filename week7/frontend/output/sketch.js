@@ -3,7 +3,8 @@ var WIDTH = screen.width,
 var number_parts = 36;
 var JSON_data;
 var isdraw = false;
-
+var objDetails = [];
+var myCanvas;
 
 function preload() {
   loadJSON('../../output.json', printData);
@@ -11,31 +12,46 @@ function preload() {
 
 function setup() {
   var prevRad = 0;
-  createCanvas(WIDTH, HEIGHT);
+  myCanvas = createCanvas(WIDTH, HEIGHT);
+  background(255);
+  drawPatterns(1);
+}
 
-  // colorMode(HSB);
-  i = 0;
 
-   translate(10, 20);
-  for(i = 0;i<JSON_data.Data.length;i++) {
-  // for(i = 0;i<1;i++) {
+function drawPatterns(num) {
+	for(var i =0;i<num;i++) { //noprotect
+    var drawStatus = true;
+    objNo = floor(random(0,JSON_data.Data.length));
+    stroke(255);
+		var rad = redrawJSON(JSON_data.Data[objNo].split(''),true).radius;
+		var x = random(10,WIDTH-10);
+		var y = random(10,HEIGHT-10);
+    for(var j =0;j<objDetails.length;j++){
 
-    push();
-    translate(random(10,WIDTH-10),random(10,HEIGHT-10));
-    // translate(floor(i/2)*400,i%2*400)
-    var radius = redrawJSON(JSON_data.Data[i].split('')).radius;
-    prevRad = radius;
-    fill(255);
-    stroke(0);
-    strokeWeight(2);
+      drawStatus = drawStatus && checkDist(objDetails[j],x,y,rad);
 
-    ellipse(0,0,radius*2+20, radius*2+20);
-    ellipse(0,0,radius*2, radius*2);
-    redrawJSON(JSON_data.Data[i].split(''))
-    pop();
-    console.log('drew - ' + i + ' - out of - ' + JSON_data.Data.length );
-  }
-console.log('finishing up..');
+    }
+    // console.log('*****');
+    if( drawStatus ) {
+      push();
+      translate(x,y);
+      // console.log(drawStatus);
+      objDetails.push({"rad":rad,"x":x, "y":y});
+      fill(255);
+      // fill(255,244,212);
+      // colorMode(HSB);
+      // stroke(random(0,360),45,85);
+      stroke(0)
+      ellipse(0,0,rad*2+10, rad*2+10);
+      ellipse(0,0,rad*2, rad*2);
+
+      noFill();
+      strokeWeight(0.8);
+      redrawJSON(JSON_data.Data[objNo].split(''),false)
+      pop();
+    }
+
+	}
 }
 
 
@@ -43,10 +59,8 @@ function printData(data) {
   JSON_data = data; //.Data[1].split(',');
 }
 
-function draw() {
-}
 
-function redrawJSON(mouse_array) {
+function redrawJSON(mouse_array, iscalculate) {
   max_mouse_x  = WIDTH / 2 +1;
   max_mouse_y = HEIGHT / 2 +1;
   p_mouse_x = WIDTH / 2 +1;
@@ -54,26 +68,26 @@ function redrawJSON(mouse_array) {
   mouse_x = WIDTH / 2 +1;
   mouse_y = HEIGHT / 2 +1;
   max_rad = 0;
-  mouse_array.unshift('e');
+  // mouse_array.unshift('e');
   for (var i = 0; i < mouse_array.length; i++) {
 
     if (!mouse_array[i].localeCompare('a')) {
       p_mouse_x = mouse_x;
       p_mouse_y = mouse_y;
-      mouse_x = p_mouse_x + 1;
+      mouse_x = p_mouse_x + 0.5;
 
     } else if (!mouse_array[i].localeCompare('b')) {
       p_mouse_x = mouse_x;
       p_mouse_y = mouse_y;
-      mouse_x = p_mouse_x - 1;
+      mouse_x = p_mouse_x - 0.5;
     } else if (!mouse_array[i].localeCompare('c')) {
       p_mouse_x = mouse_x;
       p_mouse_y = mouse_y;
-      mouse_y = p_mouse_y + 1;
+      mouse_y = p_mouse_y + 0.5;
     } else if (!mouse_array[i].localeCompare('d')) {
       p_mouse_x = mouse_x;
       p_mouse_y = mouse_y;
-      mouse_y = p_mouse_y - 1;
+      mouse_y = p_mouse_y - 0.5;
     } else if (!mouse_array[i].localeCompare('f')) {
       isdraw = false;
     } else if (!mouse_array[i].localeCompare('e')) {
@@ -90,44 +104,49 @@ function redrawJSON(mouse_array) {
 
 
     // translate(WIDTH / 2, HEIGHT / 2);
-    colorMode(HSB);
     if (isdraw) {
       for (var j = 0; j < number_parts; j++) {
         angleMode(DEGREES);
         rotate(360 / number_parts);
 
-        noFill();
-        strokeWeight(2);
-        stroke(20,0,100);
-        // var rad = sqrt((mouse_y- HEIGHT / 2)*(mouse_y- HEIGHT / 2) + (mouse_x- WIDTH / 2)*(mouse_x- WIDTH / 2));
-        // ellipse(0,0,rad*2, rad*2);
 
-        stroke(320, 60, 10);
-        strokeWeight(2);
-        line(p_mouse_x - WIDTH / 2, p_mouse_y - HEIGHT / 2, mouse_x - WIDTH / 2, mouse_y - HEIGHT / 2);
-        line(p_mouse_x - WIDTH / 2, HEIGHT - p_mouse_y - HEIGHT / 2, mouse_x - WIDTH / 2, HEIGHT - mouse_y - HEIGHT / 2);
-        // if(mouse_y > max_mouse_y) { max_mouse_y = mouse_y; }
-        // if(mouse_x > max_mouse_x) { max_mouse_x = mouse_x; }
+        if(!iscalculate){
+          line(p_mouse_x - WIDTH / 2, p_mouse_y - HEIGHT / 2, mouse_x - WIDTH / 2, mouse_y - HEIGHT / 2);
+          line(p_mouse_x - WIDTH / 2, HEIGHT - p_mouse_y - HEIGHT / 2, mouse_x - WIDTH / 2, HEIGHT - mouse_y - HEIGHT / 2);
 
-        max_mouse_x = mouse_x;
-        max_mouse_y = mouse_y;
+        }
+        var rad = sqrt((mouse_y- HEIGHT / 2)*(mouse_y- HEIGHT / 2) + (mouse_x- WIDTH / 2)*(mouse_x- WIDTH / 2));
+        if( rad > max_rad) {
+          max_rad = rad;
+        }
       }
     } else {
-      strokeWeight(5);
-      stroke(200, 60, 80);
-      // line(p_mouse_x - WIDTH / 2, p_mouse_y - HEIGHT / 2, mouse_x - WIDTH / 2, mouse_y - HEIGHT / 2);
-      var rad = sqrt((mouse_y- HEIGHT / 2)*(mouse_y- HEIGHT / 2) + (mouse_x- WIDTH / 2)*(mouse_x- WIDTH / 2));
-      if( rad > max_rad) {
-        max_rad = rad;
-      }
-
     }
   }
-  stroke(255,45,100);
-  // var rad = sqrt((max_mouse_y- HEIGHT / 2)*(max_mouse_y- HEIGHT / 2) + (max_mouse_x- WIDTH / 2)*(max_mouse_x- WIDTH / 2));
-  console.log('finishing');
+  // console.log(max_rad);
+
   return ({
     radius : max_rad
   });
 
+}
+
+function checkDist(tempObj,x,y,rad) {
+  var status = false;
+  var dist = sqrt((tempObj.x - x)*(tempObj.x - x)+(tempObj.y - y)*(tempObj.y - y));
+  // console.log(dist);
+  if( dist > (rad + tempObj.rad )*0.55 )
+  {
+    // console.log('true');
+    status = true;
+  }
+  return status;
+}
+
+function keyPressed() {
+
+  if (keyCode === RIGHT_ARROW) {
+    console.log('saving');
+    saveCanvas(myCanvas, 'output', 'jpg');
+  }
 }
